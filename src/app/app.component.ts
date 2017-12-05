@@ -8,8 +8,8 @@ import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {IItem} from './IItem';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/merge';
+import {Observable} from 'rxjs/Rx'
+
 
 @Component({
   selector: 'app-root',
@@ -27,14 +27,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-   this.listings = this.name.valueChanges.merge(this.countries.valueChanges)
-      .takeWhile(() => this.alive)
+    this.listings = Observable.merge(
+      this.name.valueChanges,
+      this.countries.valueChanges
+    ).takeWhile(() => this.alive)
       .debounceTime(400)
-      .filter((value) => value.length > 1)
+      .filter((value, i) =>  value.length > 1 )
       .distinctUntilChanged()
-      .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.countries.value}/api?encoding=json&action=search_listings&country=${this.countries.value}&place_name=${this.name.value}`))
-
-    }
+      .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.countries.value}/api?encoding=json&action=search_listings&country=${this.countries.value}&place_name=${this.name.value}`));
+  }
 
     ngOnDestroy( ) {
       this.alive = false;
