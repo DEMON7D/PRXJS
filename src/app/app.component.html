@@ -1,6 +1,6 @@
 <input [formControl]="name">
 
-<div *ngFor="let item of listings" class="block">
+<div *ngFor="let item of listings | async" class="block">
   <span class="price">{{item.price_formatted}}</span>
   <br>
   <span class="title">{{item.title}}</span>

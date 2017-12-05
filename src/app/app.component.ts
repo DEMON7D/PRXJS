@@ -9,6 +9,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {ISearchResult} from './ISearchResult';
 import {IItem} from './IItem';
+import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'app-root',
@@ -18,20 +19,20 @@ import {IItem} from './IItem';
 export class AppComponent implements OnInit, OnDestroy {
   name = new FormControl();
   private alive = true;
-  listings: IItem[];
+  listings: Observable<IItem[]>;
 
   constructor(private http: HttpService) {
 
   }
 
   ngOnInit() {
-    this.name.valueChanges
+   this.listings = this.name.valueChanges
       .takeWhile(() => this.alive)
       .debounceTime(400)
       .filter((value) => value.length > 2)
       .distinctUntilChanged()
       .switchMap( (value) =>  this.http.getData(`https://api.nestoria.co.uk/api?encoding=json&action=search_listings&country=uk&place_name=${value}`))
-      .subscribe( (response: ISearchResult) => this.listings = response.response.listings);
+
     }
 
     ngOnDestroy( ) {
