@@ -7,9 +7,9 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/distinctUntilChanged';
-import {ISearchResult} from './ISearchResult';
 import {IItem} from './IItem';
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/merge';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +18,7 @@ import {Observable} from "rxjs/Observable";
 })
 export class AppComponent implements OnInit, OnDestroy {
   name = new FormControl();
+  countries = new FormControl('de');
   private alive = true;
   listings: Observable<IItem[]>;
 
@@ -26,12 +27,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-   this.listings = this.name.valueChanges
+   this.listings = this.name.valueChanges.merge(this.countries.valueChanges)
       .takeWhile(() => this.alive)
       .debounceTime(400)
-      .filter((value) => value.length > 2)
+      .filter((value) => value.length > 1)
       .distinctUntilChanged()
-      .switchMap( (value) =>  this.http.getData(`https://api.nestoria.co.uk/api?encoding=json&action=search_listings&country=uk&place_name=${value}`))
+      .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.countries.value}/api?encoding=json&action=search_listings&country=${this.countries.value}&place_name=${this.name.value}`))
 
     }
 

@@ -1,4 +1,13 @@
-<input [formControl]="name">
+<div>
+  <input [formControl]="name">
+  <select [formControl]="countries">
+      <option>it</option>
+      <option>fr</option>
+      <option>de</option>
+  </select>
+</div>
+
+
 
 <div *ngFor="let item of listings | async" class="block">
   <span class="price">{{item.price_formatted}}</span>
