@@ -8,14 +8,17 @@ import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {ISearchResult} from './ISearchResult';
+import {IItem} from './IItem';
 
 @Component({
   selector: 'app-root',
-  template: `<input [formControl]="name">`
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
   name = new FormControl();
   private alive = true;
+  listings: IItem[];
 
   constructor(private http: HttpService) {
 
@@ -28,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .filter((value) => value.length > 2)
       .distinctUntilChanged()
       .switchMap( (value) =>  this.http.getData(`https://api.nestoria.co.uk/api?encoding=json&action=search_listings&country=uk&place_name=${value}`))
-      .subscribe( (response: ISearchResult) => console.log(response.response.listings));
+      .subscribe( (response: ISearchResult) => this.listings = response.response.listings);
     }
 
     ngOnDestroy( ) {

@@ -1,0 +1,17 @@
+.title{
+  color: #008CBA;
+}
+.price{
+  background-color: #45474B;
+  border-radius: 3px;
+  color: whitesmoke;
+}
+.block{
+  box-shadow: 2px 2px 1px rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 3px;
+  background: #FFFFFF;
+  border: 2px solid beige;
+  margin: 20px 20px 20px 20px;
+  font-size: 17px;
+}
