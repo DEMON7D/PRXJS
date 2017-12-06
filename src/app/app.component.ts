@@ -19,7 +19,7 @@ import {Observable} from 'rxjs/Rx'
 export class AppComponent implements OnInit, OnDestroy {
   name = new FormControl();
   countries = new FormControl('de');
-  private alive = true;
+
   private params = {
     name: '',
     country: this.countries.value
@@ -32,24 +32,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const name = this.name.valueChanges
-      .takeWhile(() => this.alive)
       .debounceTime(400)
       .filter((value) =>  value.length > 2 )
       .distinctUntilChanged()
       .do( (value) => this.params.name = value );
 
     const countries = this.countries.valueChanges
-      .takeWhile(() => this.alive)
       .debounceTime(400)
       .distinctUntilChanged()
       .do( (value) => this.params.country = value);
 
-     this.listings = Observable.merge(name,countries)
-       .switchMap( () =>  this.http.getData(`https://api.nestoria.${this.params.country}/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));;
+     this.listings = Observable.merge(name, countries)
+       .switchMap( () =>  this.http.getData(`https://api.nestoria.de/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));
   }
 
     ngOnDestroy( ) {
-      this.alive = false;
     }
 }
 
