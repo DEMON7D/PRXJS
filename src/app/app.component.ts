@@ -36,16 +36,16 @@ export class AppComponent implements OnInit, OnDestroy {
       .debounceTime(400)
       .filter((value) =>  value.length > 2 )
       .distinctUntilChanged()
-      .switchMap( (value) => this.params.name = value );
+      .do( (value) => this.params.name = value );
 
     const countries = this.countries.valueChanges
       .takeWhile(() => this.alive)
       .debounceTime(400)
       .distinctUntilChanged()
-      .switchMap( (value) => this.params.country = value );
+      .do( (value) => this.params.country = value );
 
      this.listings = Observable.merge(name,countries)
-       .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.params.country}/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));;
+       .switchMap( () =>  this.http.getData(`https://api.nestoria.${this.params.country}/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));;
   }
 
     ngOnDestroy( ) {
