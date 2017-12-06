@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .takeWhile(() => this.alive)
       .debounceTime(400)
       .distinctUntilChanged()
-      .do( (value) => this.params.country = value );
+      .do( (value) => this.params.country = value);
 
      this.listings = Observable.merge(name,countries)
        .switchMap( () =>  this.http.getData(`https://api.nestoria.${this.params.country}/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));;
