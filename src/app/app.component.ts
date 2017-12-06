@@ -20,6 +20,10 @@ export class AppComponent implements OnInit, OnDestroy {
   name = new FormControl();
   countries = new FormControl('de');
   private alive = true;
+  private params = {
+    name: '',
+    country: this.countries.value
+  };
   listings: Observable<IItem[]>;
 
   constructor(private http: HttpService) {
@@ -27,14 +31,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.listings = Observable.merge(
-      this.name.valueChanges,
-      this.countries.valueChanges
-    ).takeWhile(() => this.alive)
+    const name = this.name.valueChanges
+      .takeWhile(() => this.alive)
       .debounceTime(400)
-      .filter((value, i) =>  value.length > 1 )
+      .filter((value) =>  value.length > 2 )
       .distinctUntilChanged()
-      .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.countries.value}/api?encoding=json&action=search_listings&country=${this.countries.value}&place_name=${this.name.value}`));
+      .switchMap( (value) => this.params.name = value );
+
+    const countries = this.countries.valueChanges
+      .takeWhile(() => this.alive)
+      .debounceTime(400)
+      .distinctUntilChanged()
+      .switchMap( (value) => this.params.country = value );
+
+     this.listings = Observable.merge(name,countries)
+       .switchMap( (value) =>  this.http.getData(`https://api.nestoria.${this.params.country}/api?encoding=json&action=search_listings&country=${this.params.country}&place_name=${this.params.name}`));;
   }
 
     ngOnDestroy( ) {
